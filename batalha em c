@@ -1,0 +1,83 @@
+#include <stdio.h>
+
+#define TAM 10
+#define TAM_NAVIO 3
+
+int main() {
+
+    /* ======================================
+       DECLARAÇÃO DO TABULEIRO 10x10
+       ====================================== */
+    int tabuleiro[TAM][TAM];
+
+    int linha, coluna;
+    int i;
+
+    /* ======================================
+       INICIALIZAÇÃO DO TABULEIRO COM ÁGUA (0)
+       ====================================== */
+    for (linha = 0; linha < TAM; linha++) {
+        for (coluna = 0; coluna < TAM; coluna++) {
+            tabuleiro[linha][coluna] = 0;
+        }
+    }
+
+    /* ======================================
+       DECLARAÇÃO DOS NAVIOS
+       ====================================== */
+    int navioHorizontal[TAM_NAVIO] = {3, 3, 3};
+    int navioVertical[TAM_NAVIO] = {3, 3, 3};
+
+    /* ======================================
+       COORDENADAS INICIAIS (definidas no código)
+       ====================================== */
+
+    int linhaH = 2;
+    int colunaH = 4;
+
+    int linhaV = 5;
+    int colunaV = 1;
+
+    /* ======================================
+       VALIDAÇÃO DO NAVIO HORIZONTAL
+       ====================================== */
+    if (colunaH + TAM_NAVIO <= TAM) {
+
+        for (i = 0; i < TAM_NAVIO; i++) {
+
+            if (tabuleiro[linhaH][colunaH + i] == 0) {
+                tabuleiro[linhaH][colunaH + i] = navioHorizontal[i];
+            }
+        }
+    }
+
+    /* ======================================
+       VALIDAÇÃO DO NAVIO VERTICAL
+       ====================================== */
+    if (linhaV + TAM_NAVIO <= TAM) {
+
+        for (i = 0; i < TAM_NAVIO; i++) {
+
+            if (tabuleiro[linhaV + i][colunaV] == 0) {
+                tabuleiro[linhaV + i][colunaV] = navioVertical[i];
+            }
+        }
+    }
+
+    /* ======================================
+       EXIBIÇÃO DO TABULEIRO
+       ====================================== */
+
+    printf("\nTABULEIRO BATALHA NAVAL:\n\n");
+
+    for (linha = 0; linha < TAM; linha++) {
+        for (coluna = 0; coluna < TAM; coluna++) {
+
+            printf("%d ", tabuleiro[linha][coluna]);
+
+        }
+        printf("\n");
+    }
+
+    return 0;
+}
