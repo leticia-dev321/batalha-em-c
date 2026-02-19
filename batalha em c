@@ -219,3 +219,166 @@ int main() {
 
     return 0;
 }
+#include <stdio.h>
+
+#define TAM 10
+#define HAB_TAM 5
+
+#define AGUA 0
+#define NAVIO 3
+#define HABILIDADE 5
+
+/*
+    Inicializa o tabuleiro com água
+*/
+void inicializarTabuleiro(int tab[TAM][TAM]) {
+    for (int i = 0; i < TAM; i++) {
+        for (int j = 0; j < TAM; j++) {
+            tab[i][j] = AGUA;
+        }
+    }
+}
+
+/*
+    Posiciona navios fixos (apenas para visualização)
+*/
+void posicionarNavios(int tab[TAM][TAM]) {
+    // Horizontal
+    for (int i = 0; i < 3; i++)
+        tab[2][2 + i] = NAVIO;
+
+    // Vertical
+    for (int i = 0; i < 3; i++)
+        tab[6 + i][7] = NAVIO;
+}
+
+/*
+    Cria habilidade CONE (aponta para baixo)
+*/
+void criarCone(int cone[HAB_TAM][HAB_TAM]) {
+
+    for (int i = 0; i < HAB_TAM; i++) {
+        for (int j = 0; j < HAB_TAM; j++) {
+
+            // Centro horizontal
+            int centro = HAB_TAM / 2;
+
+            // Forma de cone expandindo
+            if (j >= centro - i && j <= centro + i)
+                cone[i][j] = 1;
+            else
+                cone[i][j] = 0;
+        }
+    }
+}
+
+/*
+    Cria habilidade CRUZ
+*/
+void criarCruz(int cruz[HAB_TAM][HAB_TAM]) {
+
+    int centro = HAB_TAM / 2;
+
+    for (int i = 0; i < HAB_TAM; i++) {
+        for (int j = 0; j < HAB_TAM; j++) {
+
+            if (i == centro || j == centro)
+                cruz[i][j] = 1;
+            else
+                cruz[i][j] = 0;
+        }
+    }
+}
+
+/*
+    Cria habilidade OCTAEDRO (losango)
+*/
+void criarOctaedro(int oct[HAB_TAM][HAB_TAM]) {
+
+    int centro = HAB_TAM / 2;
+
+    for (int i = 0; i < HAB_TAM; i++) {
+        for (int j = 0; j < HAB_TAM; j++) {
+
+            // Distância Manhattan para formar losango
+            if (abs(i - centro) + abs(j - centro) <= centro)
+                oct[i][j] = 1;
+            else
+                oct[i][j] = 0;
+        }
+    }
+}
+
+/*
+    Sobrepõe habilidade no tabuleiro
+*/
+void aplicarHabilidade(int tab[TAM][TAM], int hab[HAB_TAM][HAB_TAM], int origemLinha, int origemColuna) {
+
+    int offset = HAB_TAM / 2;
+
+    for (int i = 0; i < HAB_TAM; i++) {
+        for (int j = 0; j < HAB_TAM; j++) {
+
+            if (hab[i][j] == 1) {
+
+                int linhaTab = origemLinha + (i - offset);
+                int colTab = origemColuna + (j - offset);
+
+                // Verifica limites do tabuleiro
+                if (linhaTab >= 0 && linhaTab < TAM &&
+                    colTab >= 0 && colTab < TAM) {
+
+                    // Marca área afetada (não sobrescreve navio)
+                    if (tab[linhaTab][colTab] == AGUA)
+                        tab[linhaTab][colTab] = HABILIDADE;
+                }
+            }
+        }
+    }
+}
+
+/*
+    Exibe tabuleiro com símbolos diferentes
+*/
+void exibirTabuleiro(int tab[TAM][TAM]) {
+
+    printf("\n=== TABULEIRO COM HABILIDADES ===\n\n");
+
+    for (int i = 0; i < TAM; i++) {
+        for (int j = 0; j < TAM; j++) {
+
+            if (tab[i][j] == AGUA)
+                printf(". ");
+            else if (tab[i][j] == NAVIO)
+                printf("N ");
+            else if (tab[i][j] == HABILIDADE)
+                printf("* ");
+        }
+        printf("\n");
+    }
+}
+
+int main() {
+
+    int tabuleiro[TAM][TAM];
+
+    int cone[HAB_TAM][HAB_TAM];
+    int cruz[HAB_TAM][HAB_TAM];
+    int octaedro[HAB_TAM][HAB_TAM];
+
+    inicializarTabuleiro(tabuleiro);
+    posicionarNavios(tabuleiro);
+
+    criarCone(cone);
+    criarCruz(cruz);
+    criarOctaedro(octaedro);
+
+    // Pontos de origem definidos diretamente
+    aplicarHabilidade(tabuleiro, cone, 1, 5);
+    aplicarHabilidade(tabuleiro, cruz, 5, 2);
+    aplicarHabilidade(tabuleiro, octaedro, 7, 7);
+
+    exibirTabuleiro(tabuleiro);
+
+    return 0;
+}
